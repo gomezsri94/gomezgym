@@ -64,7 +64,14 @@ export function useExercises() {
     write(EX_KEY, next);
     setExercises(next);
   };
-  return { exercises, addExercise, removeExercise };
+  const updateExercise = (id: string, patch: Partial<Omit<Exercise, "id">>) => {
+    const next = read<Exercise[]>(EX_KEY, DEFAULT_EXERCISES).map((e) =>
+      e.id === id ? { ...e, ...patch } : e,
+    );
+    write(EX_KEY, next);
+    setExercises(next);
+  };
+  return { exercises, addExercise, removeExercise, updateExercise };
 }
 
 export function useExercise(id: string) {

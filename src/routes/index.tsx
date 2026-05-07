@@ -9,7 +9,7 @@ import { ChevronRight, Pencil, Plus, Trash2, Check, X } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "IronLog — Track Your Lifts" },
+      { title: "GomezTracker — Track Your Lifts" },
       { name: "description", content: "Simple gym tracker for sets, reps and kg." },
     ],
   }),

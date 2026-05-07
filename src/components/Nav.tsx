@@ -9,7 +9,7 @@ export function Nav() {
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-glow">
             <Dumbbell className="h-4 w-4" />
           </span>
-          <span>IronLog</span>
+          <span>GomezTracker</span>
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link

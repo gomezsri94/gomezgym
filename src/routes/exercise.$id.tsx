@@ -103,7 +103,7 @@ function ExercisePage() {
               <img
                 src={exercise.image}
                 alt={exercise.name}
-                className="h-56 w-full object-cover"
+                className="max-h-[70vh] w-full object-contain bg-muted"
               />
               <div className="absolute right-2 top-2 flex gap-1">
                 <button

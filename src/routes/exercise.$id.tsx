@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useExercise, useLogs, todayISO } from "@/lib/gym-store";
-import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
+import { useExercise, useExercises, useLogs, todayISO } from "@/lib/gym-store";
+import { ArrowLeft, ImagePlus, Plus, Trash2, Save, X } from "lucide-react";
 
 export const Route = createFileRoute("/exercise/$id")({
   component: ExercisePage,
@@ -13,8 +13,30 @@ export const Route = createFileRoute("/exercise/$id")({
 function ExercisePage() {
   const { id } = Route.useParams();
   const exercise = useExercise(id);
+  const { updateExercise } = useExercises();
   const { logs, addLog, removeLog } = useLogs();
   const navigate = useNavigate();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleImage = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 1024;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+        updateExercise(id, { image: dataUrl });
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const [date, setDate] = useState(todayISO());
   const [sets, setSets] = useState<{ reps: string; kg: string; seconds: string }[]>([
@@ -74,6 +96,52 @@ function ExercisePage() {
         {exercise.muscle && (
           <p className="mt-1 text-sm text-muted-foreground">{exercise.muscle}</p>
         )}
+
+        <section className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
+          {exercise.image ? (
+            <div className="relative">
+              <img
+                src={exercise.image}
+                alt={exercise.name}
+                className="h-56 w-full object-cover"
+              />
+              <div className="absolute right-2 top-2 flex gap-1">
+                <button
+                  onClick={() => fileRef.current?.click()}
+                  className="rounded-md bg-background/80 px-2 py-1 text-xs font-medium backdrop-blur transition hover:bg-background"
+                >
+                  Change
+                </button>
+                <button
+                  onClick={() => updateExercise(id, { image: undefined })}
+                  className="rounded-md bg-background/80 p-1.5 backdrop-blur transition hover:bg-background"
+                  aria-label="Remove image"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileRef.current?.click()}
+              className="flex h-32 w-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground transition hover:bg-muted"
+            >
+              <ImagePlus className="h-6 w-6" />
+              Add a photo for this exercise
+            </button>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleImage(f);
+              e.target.value = "";
+            }}
+          />
+        </section>
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h2 className="text-lg font-semibold">Log a session</h2>

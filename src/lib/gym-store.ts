@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export type WorkoutSet = { reps: number; kg: number };
+export type WorkoutSet = { reps: number; kg: number; seconds?: number };
 export type WorkoutEntry = {
   id: string;
   exerciseId: string;

@@ -17,8 +17,8 @@ function ExercisePage() {
   const navigate = useNavigate();
 
   const [date, setDate] = useState(todayISO());
-  const [sets, setSets] = useState<{ reps: string; kg: string }[]>([
-    { reps: "", kg: "" },
+  const [sets, setSets] = useState<{ reps: string; kg: string; seconds: string }[]>([
+    { reps: "", kg: "", seconds: "" },
   ]);
 
   const exerciseLogs = useMemo(
@@ -45,11 +45,18 @@ function ExercisePage() {
 
   const handleSave = () => {
     const parsed = sets
-      .map((s) => ({ reps: Number(s.reps), kg: Number(s.kg) }))
-      .filter((s) => s.reps > 0);
+      .map((s) => {
+        const secs = Number(s.seconds);
+        return {
+          reps: Number(s.reps),
+          kg: Number(s.kg),
+          ...(secs > 0 ? { seconds: secs } : {}),
+        };
+      })
+      .filter((s) => s.reps > 0 || (s.seconds ?? 0) > 0);
     if (parsed.length === 0) return;
     addLog({ exerciseId: id, date, sets: parsed });
-    setSets([{ reps: "", kg: "" }]);
+    setSets([{ reps: "", kg: "", seconds: "" }]);
   };
 
   return (
@@ -82,14 +89,15 @@ function ExercisePage() {
           </div>
 
           <div className="mt-4 space-y-2">
-            <div className="grid grid-cols-[40px_1fr_1fr_auto] gap-2 text-xs font-medium text-muted-foreground">
-              <span>Set</span>
+            <div className="grid grid-cols-[32px_1fr_1fr_1fr_auto] gap-2 text-xs font-medium text-muted-foreground">
+              <span>#</span>
               <span>Reps</span>
-              <span>Weight (kg)</span>
+              <span>Kg</span>
+              <span>Time (s)</span>
               <span />
             </div>
             {sets.map((s, i) => (
-              <div key={i} className="grid grid-cols-[40px_1fr_1fr_auto] items-center gap-2">
+              <div key={i} className="grid grid-cols-[32px_1fr_1fr_1fr_auto] items-center gap-2">
                 <span className="text-sm font-semibold text-muted-foreground">{i + 1}</span>
                 <Input
                   type="number"
@@ -110,6 +118,15 @@ function ExercisePage() {
                     setSets((prev) => prev.map((p, idx) => (idx === i ? { ...p, kg: e.target.value } : p)))
                   }
                 />
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="0"
+                  value={s.seconds}
+                  onChange={(e) =>
+                    setSets((prev) => prev.map((p, idx) => (idx === i ? { ...p, seconds: e.target.value } : p)))
+                  }
+                />
                 <button
                   onClick={() => setSets((prev) => prev.filter((_, idx) => idx !== i))}
                   disabled={sets.length === 1}
@@ -125,7 +142,7 @@ function ExercisePage() {
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               variant="outline"
-              onClick={() => setSets((p) => [...p, { reps: "", kg: "" }])}
+              onClick={() => setSets((p) => [...p, { reps: "", kg: "", seconds: "" }])}
             >
               <Plus className="h-4 w-4" /> Add set
             </Button>
@@ -167,7 +184,7 @@ function ExercisePage() {
                         key={i}
                         className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums"
                       >
-                        {s.reps} × {s.kg}kg
+                        {s.reps} × {s.kg}kg{s.seconds ? ` · ${s.seconds}s` : ""}
                       </span>
                     ))}
                   </div>

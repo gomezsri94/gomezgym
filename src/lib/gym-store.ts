@@ -8,7 +8,7 @@ export type WorkoutEntry = {
   sets: WorkoutSet[];
   createdAt: number;
 };
-export type Exercise = { id: string; name: string; muscle?: string };
+export type Exercise = { id: string; name: string; muscle?: string; image?: string };
 
 const EX_KEY = "gym.exercises.v1";
 const LOG_KEY = "gym.logs.v1";

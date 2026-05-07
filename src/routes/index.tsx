@@ -4,7 +4,7 @@ import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExercises, useLogs } from "@/lib/gym-store";
-import { ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, Pencil, Plus, Trash2, Check, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({

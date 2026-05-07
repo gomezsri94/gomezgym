@@ -80,7 +80,7 @@ function CalendarPage() {
                             key={i}
                             className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums"
                           >
-                            {s.reps} × {s.kg}kg
+                            {s.reps} × {s.kg}kg{s.seconds ? ` · ${s.seconds}s` : ""}
                           </span>
                         ))}
                       </div>

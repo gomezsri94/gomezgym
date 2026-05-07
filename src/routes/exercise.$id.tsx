@@ -17,8 +17,8 @@ function ExercisePage() {
   const navigate = useNavigate();
 
   const [date, setDate] = useState(todayISO());
-  const [sets, setSets] = useState<{ reps: string; kg: string }[]>([
-    { reps: "", kg: "" },
+  const [sets, setSets] = useState<{ reps: string; kg: string; seconds: string }[]>([
+    { reps: "", kg: "", seconds: "" },
   ]);
 
   const exerciseLogs = useMemo(

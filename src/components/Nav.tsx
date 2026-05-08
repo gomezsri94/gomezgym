@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Dumbbell, CalendarDays, ListChecks } from "lucide-react";
+import { Dumbbell, CalendarDays, ListChecks, Apple } from "lucide-react";
 
 export function Nav() {
   return (
@@ -19,6 +19,13 @@ export function Nav() {
             activeProps={{ className: "bg-muted text-foreground" }}
           >
             <ListChecks className="h-4 w-4" /> Exercises
+          </Link>
+          <Link
+            to="/food"
+            className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            activeProps={{ className: "bg-muted text-foreground" }}
+          >
+            <Apple className="h-4 w-4" /> Food
           </Link>
           <Link
             to="/calendar"

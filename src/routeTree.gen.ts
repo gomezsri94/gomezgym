@@ -9,10 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as FoodRouteImport } from './routes/food'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FoodIdRouteImport } from './routes/food.$id'
 import { Route as ExerciseIdRouteImport } from './routes/exercise.$id'
 
+const FoodRoute = FoodRouteImport.update({
+  id: '/food',
+  path: '/food',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CalendarRoute = CalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
@@ -23,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FoodIdRoute = FoodIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => FoodRoute,
+} as any)
 const ExerciseIdRoute = ExerciseIdRouteImport.update({
   id: '/exercise/$id',
   path: '/exercise/$id',
@@ -32,35 +44,49 @@ const ExerciseIdRoute = ExerciseIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
+  '/food': typeof FoodRouteWithChildren
   '/exercise/$id': typeof ExerciseIdRoute
+  '/food/$id': typeof FoodIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
+  '/food': typeof FoodRouteWithChildren
   '/exercise/$id': typeof ExerciseIdRoute
+  '/food/$id': typeof FoodIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
+  '/food': typeof FoodRouteWithChildren
   '/exercise/$id': typeof ExerciseIdRoute
+  '/food/$id': typeof FoodIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/exercise/$id'
+  fullPaths: '/' | '/calendar' | '/food' | '/exercise/$id' | '/food/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/exercise/$id'
-  id: '__root__' | '/' | '/calendar' | '/exercise/$id'
+  to: '/' | '/calendar' | '/food' | '/exercise/$id' | '/food/$id'
+  id: '__root__' | '/' | '/calendar' | '/food' | '/exercise/$id' | '/food/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalendarRoute: typeof CalendarRoute
+  FoodRoute: typeof FoodRouteWithChildren
   ExerciseIdRoute: typeof ExerciseIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/food': {
+      id: '/food'
+      path: '/food'
+      fullPath: '/food'
+      preLoaderRoute: typeof FoodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calendar': {
       id: '/calendar'
       path: '/calendar'
@@ -75,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/food/$id': {
+      id: '/food/$id'
+      path: '/$id'
+      fullPath: '/food/$id'
+      preLoaderRoute: typeof FoodIdRouteImport
+      parentRoute: typeof FoodRoute
+    }
     '/exercise/$id': {
       id: '/exercise/$id'
       path: '/exercise/$id'
@@ -85,9 +118,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FoodRouteChildren {
+  FoodIdRoute: typeof FoodIdRoute
+}
+
+const FoodRouteChildren: FoodRouteChildren = {
+  FoodIdRoute: FoodIdRoute,
+}
+
+const FoodRouteWithChildren = FoodRoute._addFileChildren(FoodRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalendarRoute: CalendarRoute,
+  FoodRoute: FoodRouteWithChildren,
   ExerciseIdRoute: ExerciseIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Play, RotateCcw, Pause } from "lucide-react";
 
-const DURATION = 60;
+const DEFAULT_DURATION = 60;
 
 export function RestTimer() {
-  const [remaining, setRemaining] = useState(DURATION);
+  const [duration, setDuration] = useState(DEFAULT_DURATION);
+  const [remaining, setRemaining] = useState(DEFAULT_DURATION);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -26,16 +28,28 @@ export function RestTimer() {
   }, [running]);
 
   const start = () => {
-    if (remaining === 0) setRemaining(DURATION);
+    if (remaining === 0) setRemaining(duration);
     setRunning(true);
   };
   const pause = () => setRunning(false);
   const reset = () => {
     setRunning(false);
-    setRemaining(DURATION);
+    setRemaining(duration);
   };
 
-  const progress = ((DURATION - remaining) / DURATION) * 100;
+  const onDurationChange = (val: string) => {
+    const n = Math.max(1, Math.min(3600, Math.floor(Number(val) || 0)));
+    setDuration(n);
+    if (!running) setRemaining(n);
+  };
+
+  const setPreset = (n: number) => {
+    setDuration(n);
+    setRunning(false);
+    setRemaining(n);
+  };
+
+  const progress = ((duration - remaining) / duration) * 100;
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - progress / 100);
@@ -74,8 +88,34 @@ export function RestTimer() {
         <div>
           <div className="font-semibold">Rest Timer</div>
           <div className="text-xs text-muted-foreground">
-            {done ? "Time's up — back to it!" : "60-second countdown between sets."}
+            {done ? "Time's up — back to it!" : `${duration}-second countdown between sets.`}
           </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="text-xs text-muted-foreground">Duration</label>
+          <Input
+            type="number"
+            min={1}
+            max={3600}
+            value={duration}
+            onChange={(e) => onDurationChange(e.target.value)}
+            disabled={running}
+            className="w-24 h-8"
+          />
+          <span className="text-xs text-muted-foreground">s</span>
+          {[30, 60, 90, 120].map((n) => (
+            <Button
+              key={n}
+              type="button"
+              size="sm"
+              variant={duration === n ? "secondary" : "ghost"}
+              onClick={() => setPreset(n)}
+              disabled={running}
+              className="h-7 px-2 text-xs"
+            >
+              {n}s
+            </Button>
+          ))}
         </div>
         <div className="flex flex-wrap gap-2">
           {running ? (
@@ -84,7 +124,7 @@ export function RestTimer() {
             </Button>
           ) : (
             <Button onClick={start} variant="hero" size="sm">
-              <Play className="h-4 w-4" /> {remaining === DURATION ? "Start" : done ? "Restart" : "Resume"}
+              <Play className="h-4 w-4" /> {remaining === duration ? "Start" : done ? "Restart" : "Resume"}
             </Button>
           )}
           <Button onClick={reset} variant="outline" size="sm">

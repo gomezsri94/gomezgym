@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Nav } from "@/components/Nav";
+import { RestTimer } from "@/components/RestTimer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExercises, useLogs } from "@/lib/gym-store";
@@ -46,6 +47,8 @@ function Index() {
             Tap any exercise to log sets, reps and weight.
           </p>
         </section>
+
+        <RestTimer />
 
         <form
           onSubmit={(e) => {

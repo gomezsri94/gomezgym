@@ -276,6 +276,7 @@ function FoodPage() {
                       )}
                     </>
                   )}
+                  </div>
                 </li>
               );
             })}

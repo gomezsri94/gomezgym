@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ export const Route = createFileRoute("/food")({
 });
 
 function FoodIndex() {
+  const location = useLocation();
   const { foods, addFood, removeFood, updateFood } = useFoods();
   const { logs } = useFoodLogs();
   const [name, setName] = useState("");
@@ -38,6 +39,8 @@ function FoodIndex() {
     });
     setEditingId(null);
   };
+
+  if (location.pathname !== "/food") return <Outlet />;
 
   return (
     <div className="min-h-screen bg-background">

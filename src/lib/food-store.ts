@@ -96,5 +96,12 @@ export function useFoodLogs() {
     write(FOOD_LOG_KEY, next);
     setLogs(next);
   };
-  return { logs, addFoodLog, removeFoodLog };
+  const updateFoodLog = (id: string, patch: Partial<Omit<FoodEntry, "id" | "createdAt">>) => {
+    const next = read<FoodEntry[]>(FOOD_LOG_KEY, []).map((l) =>
+      l.id === id ? { ...l, ...patch } : l,
+    );
+    write(FOOD_LOG_KEY, next);
+    setLogs(next);
+  };
+  return { logs, addFoodLog, removeFoodLog, updateFoodLog };
 }

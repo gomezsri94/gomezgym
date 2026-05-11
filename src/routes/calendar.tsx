@@ -130,7 +130,15 @@ function CalendarPage() {
                       <div className="font-semibold">{food?.name ?? "Deleted food"}</div>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          {log.amount} g
+                          Qty {log.quantity || 0}
+                        </span>
+                        {log.brand && (
+                          <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium">
+                            {log.brand}
+                          </span>
+                        )}
+                        <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
+                          {log.grams || log.amount || 0}g
                         </span>
                         <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
                           {log.calories} kcal

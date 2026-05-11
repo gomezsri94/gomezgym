@@ -3,11 +3,9 @@ import { useMemo, useState } from "react";
 import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
 import { useFood, useFoodLogs } from "@/lib/food-store";
-import { formatDateISO, todayISO } from "@/lib/gym-store";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, Pencil, Save, Trash2, X } from "lucide-react";
+import { todayISO } from "@/lib/gym-store";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/food/$id")({
   component: FoodPage,
@@ -16,16 +14,13 @@ export const Route = createFileRoute("/food/$id")({
 function FoodPage() {
   const { id } = Route.useParams();
   const food = useFood(id);
-  const { logs, addFoodLog, removeFoodLog, updateFoodLog } = useFoodLogs();
+  const { logs, addFoodLog, removeFoodLog } = useFoodLogs();
   const navigate = useNavigate();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editAmount, setEditAmount] = useState("");
-  const [editCalories, setEditCalories] = useState("");
-  const [editNotes, setEditNotes] = useState("");
-  const [editDate, setEditDate] = useState("");
 
-  const [date, setDate] = useState<Date>(new Date());
-  const [amount, setAmount] = useState("");
+  const [date, setDate] = useState(todayISO());
+  const [quantity, setQuantity] = useState("");
+  const [brand, setBrand] = useState("");
+  const [grams, setGrams] = useState("");
   const [calories, setCalories] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -34,14 +29,6 @@ function FoodPage() {
       logs
         .filter((l) => l.foodId === id)
         .sort((a, b) => b.createdAt - a.createdAt),
-    [logs, id],
-  );
-
-  const loggedDays = useMemo(
-    () =>
-      Array.from(new Set(logs.filter((l) => l.foodId === id).map((l) => l.date))).map(
-        (d) => new Date(d + "T00:00:00"),
-      ),
     [logs, id],
   );
 
@@ -60,17 +47,22 @@ function FoodPage() {
   }
 
   const handleSave = () => {
-    const a = Number(amount);
-    const c = Number(calories);
-    if (!(a > 0) && !(c > 0)) return;
+    const parsedQuantity = Number(quantity);
+    const parsedGrams = Number(grams);
+    const parsedCalories = Number(calories);
+    if (!(parsedQuantity > 0) && !(parsedGrams > 0) && !(parsedCalories > 0)) return;
     addFoodLog({
       foodId: id,
-      date: date ? formatDateISO(date) : todayISO(),
-      amount: a || 0,
-      calories: c || 0,
+      date,
+      quantity: parsedQuantity || 0,
+      brand: brand.trim() || undefined,
+      grams: parsedGrams || 0,
+      calories: parsedCalories || 0,
       notes: notes.trim() || undefined,
     });
-    setAmount("");
+    setQuantity("");
+    setBrand("");
+    setGrams("");
     setCalories("");
     setNotes("");
   };
@@ -91,73 +83,57 @@ function FoodPage() {
           <p className="mt-1 text-sm text-muted-foreground">{food.category}</p>
         )}
 
-        <section className="mt-6 grid gap-6 md:grid-cols-[auto_1fr]">
-          <div className="rounded-2xl border border-border bg-card p-2">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(d) => d && setDate(d)}
-              modifiers={{ logged: loggedDays }}
-              modifiersClassNames={{
-                logged:
-                  "relative after:absolute after:bottom-1 after:left-1/2 after:h-1 after:w-1 after:-translate-x-1/2 after:rounded-full after:bg-primary",
-              }}
-              className={cn("p-3 pointer-events-auto")}
-            />
+        <section className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <h2 className="text-lg font-semibold">Log a session</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Date</label>
+              <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Quantity</label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                placeholder="0"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Brand</label>
+              <Input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Optional" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Grams</label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                placeholder="0"
+                value={grams}
+                onChange={(e) => setGrams(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Calories</label>
+              <Input
+                type="number"
+                inputMode="numeric"
+                placeholder="0"
+                value={calories}
+                onChange={(e) => setCalories(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Notes</label>
+              <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional" />
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <h2 className="text-lg font-semibold">
-              Log entry —{" "}
-              {date.toLocaleDateString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
-            </h2>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Amount (g)
-                </label>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">
-                  Calories
-                </label>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  placeholder="0"
-                  value={calories}
-                  onChange={(e) => setCalories(e.target.value)}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Notes
-                </label>
-                <Input
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Optional"
-                />
-              </div>
-            </div>
-
-            <div className="mt-4 flex justify-end">
-              <Button variant="hero" onClick={handleSave}>
-                <Save className="h-4 w-4" /> Save entry
-              </Button>
-            </div>
+          <div className="mt-4 flex justify-end">
+            <Button variant="hero" onClick={handleSave}>
+              <Save className="h-4 w-4" /> Save session
+            </Button>
           </div>
         </section>
 
@@ -165,124 +141,48 @@ function FoodPage() {
           <h2 className="text-lg font-semibold">History</h2>
           <ul className="mt-3 space-y-2">
             {foodLogs.map((log) => {
-              const isEditing = editingId === log.id;
-              const startEdit = () => {
-                setEditingId(log.id);
-                setEditAmount(String(log.amount ?? ""));
-                setEditCalories(String(log.calories ?? ""));
-                setEditNotes(log.notes ?? "");
-                setEditDate(log.date);
-              };
-              const cancelEdit = () => setEditingId(null);
-              const saveEdit = () => {
-                updateFoodLog(log.id, {
-                  amount: Number(editAmount) || 0,
-                  calories: Number(editCalories) || 0,
-                  notes: editNotes.trim() || undefined,
-                  date: editDate || log.date,
-                });
-                setEditingId(null);
-              };
+              const logGrams = log.grams || log.amount || 0;
               return (
-                <li key={log.id}>
-                  <div
-                    role={isEditing ? undefined : "button"}
-                    tabIndex={isEditing ? -1 : 0}
-                    onClick={isEditing ? undefined : startEdit}
-                    onKeyDown={
-                      isEditing
-                        ? undefined
-                        : (e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              startEdit();
-                            }
-                          }
-                    }
-                    className={cn(
-                      "rounded-xl border border-border bg-card p-4 transition",
-                      !isEditing && "cursor-pointer hover:border-primary/60",
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium">
-                        {new Date(log.date + "T00:00:00").toLocaleDateString(undefined, {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFoodLog(log.id);
-                        }}
-                        className="rounded p-1 text-muted-foreground hover:text-destructive"
-                        aria-label="Delete entry"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                <li key={log.id} className="rounded-xl border border-border bg-card p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium">
+                      {new Date(log.date + "T00:00:00").toLocaleDateString(undefined, {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </div>
-
-                  {isEditing ? (
-                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground">Date</label>
-                        <Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground">Amount (g)</label>
-                        <Input
-                          type="number"
-                          inputMode="decimal"
-                          value={editAmount}
-                          onChange={(e) => setEditAmount(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground">Calories</label>
-                        <Input
-                          type="number"
-                          inputMode="numeric"
-                          value={editCalories}
-                          onChange={(e) => setEditCalories(e.target.value)}
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-xs font-medium text-muted-foreground">Notes</label>
-                        <Input value={editNotes} onChange={(e) => setEditNotes(e.target.value)} />
-                      </div>
-                      <div className="sm:col-span-2 flex justify-end gap-2">
-                        <Button variant="outline" onClick={cancelEdit}>
-                          <X className="h-4 w-4" /> Cancel
-                        </Button>
-                        <Button variant="hero" onClick={saveEdit}>
-                          <Save className="h-4 w-4" /> Save
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          {log.amount} g
-                        </span>
-                        <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          {log.calories} kcal
-                        </span>
-                      </div>
-                      {log.notes && (
-                        <div className="mt-2 text-xs text-muted-foreground">{log.notes}</div>
-                      )}
-                    </>
-                  )}
+                    <button
+                      onClick={() => removeFoodLog(log.id)}
+                      className="rounded p-1 text-muted-foreground hover:text-destructive"
+                      aria-label="Delete session"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
+                      Qty {log.quantity || 0}
+                    </span>
+                    {log.brand && (
+                      <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium">
+                        {log.brand}
+                      </span>
+                    )}
+                    <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
+                      {logGrams}g
+                    </span>
+                    <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
+                      {log.calories} kcal
+                    </span>
+                  </div>
+                  {log.notes && <div className="mt-2 text-xs text-muted-foreground">{log.notes}</div>}
                 </li>
               );
             })}
             {foodLogs.length === 0 && (
               <li className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                No entries logged yet.
+                No sessions logged yet.
               </li>
             )}
           </ul>

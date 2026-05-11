@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ export const Route = createFileRoute("/food")({
 });
 
 function FoodIndex() {
+  const location = useLocation();
   const { foods, addFood, removeFood, updateFood } = useFoods();
   const { logs } = useFoodLogs();
   const [name, setName] = useState("");
@@ -38,6 +39,8 @@ function FoodIndex() {
     });
     setEditingId(null);
   };
+
+  if (location.pathname !== "/food") return <Outlet />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,8 +122,8 @@ function FoodIndex() {
                       <div>
                         <div className="font-semibold">{f.name}</div>
                         <div className="mt-0.5 text-xs text-muted-foreground">
-                          {f.category ?? "—"} · {fLogs.length} entr{fLogs.length === 1 ? "y" : "ies"}
-                          {last ? ` · last ${last.amount}g · ${last.calories} kcal` : ""}
+                          {f.category ?? "—"} · {fLogs.length} session{fLogs.length === 1 ? "" : "s"}
+                          {last ? ` · last ${last.grams || last.amount || 0}g · ${last.calories} kcal` : ""}
                         </div>
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground transition group-hover:text-primary" />

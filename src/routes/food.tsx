@@ -119,8 +119,8 @@ function FoodIndex() {
                       <div>
                         <div className="font-semibold">{f.name}</div>
                         <div className="mt-0.5 text-xs text-muted-foreground">
-                          {f.category ?? "—"} · {fLogs.length} entr{fLogs.length === 1 ? "y" : "ies"}
-                          {last ? ` · last ${last.amount}g · ${last.calories} kcal` : ""}
+                          {f.category ?? "—"} · {fLogs.length} session{fLogs.length === 1 ? "" : "s"}
+                          {last ? ` · last ${last.grams || last.amount || 0}g · ${last.calories} kcal` : ""}
                         </div>
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground transition group-hover:text-primary" />

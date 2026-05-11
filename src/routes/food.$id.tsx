@@ -7,7 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { useFood, useFoodLogs } from "@/lib/food-store";
 import { formatDateISO, todayISO } from "@/lib/gym-store";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Save, Trash2, X } from "lucide-react";
 
 export const Route = createFileRoute("/food/$id")({
   component: FoodPage,

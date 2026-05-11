@@ -4,9 +4,12 @@ export type FoodEntry = {
   id: string;
   foodId: string;
   date: string; // YYYY-MM-DD
-  amount: number; // grams or units
+  quantity: number;
+  brand?: string;
+  grams: number;
   calories: number;
   notes?: string;
+  amount?: number; // legacy grams value from earlier food logs
   createdAt: number;
 };
 export type Food = { id: string; name: string; category?: string };

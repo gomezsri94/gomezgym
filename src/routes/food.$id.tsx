@@ -16,8 +16,13 @@ export const Route = createFileRoute("/food/$id")({
 function FoodPage() {
   const { id } = Route.useParams();
   const food = useFood(id);
-  const { logs, addFoodLog, removeFoodLog } = useFoodLogs();
+  const { logs, addFoodLog, removeFoodLog, updateFoodLog } = useFoodLogs();
   const navigate = useNavigate();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editAmount, setEditAmount] = useState("");
+  const [editCalories, setEditCalories] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+  const [editDate, setEditDate] = useState("");
 
   const [date, setDate] = useState<Date>(new Date());
   const [amount, setAmount] = useState("");

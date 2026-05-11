@@ -57,8 +57,8 @@ function CalendarPage() {
               modifiers={{ trained: trainedDays, food: foodDays }}
               modifiersClassNames={{
                 trained:
-                  "relative after:absolute after:bottom-1 after:left-[calc(50%-6px)] after:h-1 after:w-1 after:rounded-full after:bg-primary",
-                food: "relative before:absolute before:bottom-1 before:left-[calc(50%+2px)] before:h-1 before:w-1 before:rounded-full before:bg-emerald-500",
+                  "relative after:absolute after:bottom-1 after:left-1/2 after:-ml-2 after:h-1 after:w-1 after:rounded-full after:bg-primary",
+                food: "relative before:absolute before:bottom-1 before:left-1/2 before:ml-1 before:h-1 before:w-1 before:rounded-full before:bg-emerald-500",
               }}
               className={cn("p-3 pointer-events-auto")}
             />

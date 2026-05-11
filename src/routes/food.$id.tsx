@@ -184,37 +184,45 @@ function FoodPage() {
                 setEditingId(null);
               };
               return (
-                <li
-                  key={log.id}
-                  className="rounded-xl border border-border bg-card p-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">
-                      {new Date(log.date + "T00:00:00").toLocaleDateString(undefined, {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {!isEditing && (
-                        <button
-                          onClick={startEdit}
-                          className="rounded p-1 text-muted-foreground hover:text-foreground"
-                          aria-label="Edit entry"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                      )}
+                <li key={log.id}>
+                  <div
+                    role={isEditing ? undefined : "button"}
+                    tabIndex={isEditing ? -1 : 0}
+                    onClick={isEditing ? undefined : startEdit}
+                    onKeyDown={
+                      isEditing
+                        ? undefined
+                        : (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              startEdit();
+                            }
+                          }
+                    }
+                    className={cn(
+                      "rounded-xl border border-border bg-card p-4 transition",
+                      !isEditing && "cursor-pointer hover:border-primary/60",
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-medium">
+                        {new Date(log.date + "T00:00:00").toLocaleDateString(undefined, {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </div>
                       <button
-                        onClick={() => removeFoodLog(log.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeFoodLog(log.id);
+                        }}
                         className="rounded p-1 text-muted-foreground hover:text-destructive"
                         aria-label="Delete entry"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
-                  </div>
 
                   {isEditing ? (
                     <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -268,6 +276,7 @@ function FoodPage() {
                       )}
                     </>
                   )}
+                  </div>
                 </li>
               );
             })}

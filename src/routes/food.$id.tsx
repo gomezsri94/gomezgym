@@ -18,6 +18,10 @@ function FoodPage() {
   const navigate = useNavigate();
 
   const [date, setDate] = useState(todayISO());
+  const [time, setTime] = useState(() => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
   const [quantity, setQuantity] = useState("");
   const [brand, setBrand] = useState("");
   const [grams, setGrams] = useState("");

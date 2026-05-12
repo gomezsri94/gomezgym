@@ -18,6 +18,10 @@ function FoodPage() {
   const navigate = useNavigate();
 
   const [date, setDate] = useState(todayISO());
+  const [time, setTime] = useState(() => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
   const [quantity, setQuantity] = useState("");
   const [brand, setBrand] = useState("");
   const [grams, setGrams] = useState("");
@@ -54,6 +58,7 @@ function FoodPage() {
     addFoodLog({
       foodId: id,
       date,
+      time: time || undefined,
       quantity: parsedQuantity || 0,
       brand: brand.trim() || undefined,
       grams: parsedGrams || 0,
@@ -89,6 +94,10 @@ function FoodPage() {
             <div>
               <label className="text-xs font-medium text-muted-foreground">Date</label>
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Time</label>
+              <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Quantity</label>
@@ -151,6 +160,7 @@ function FoodPage() {
                         month: "short",
                         day: "numeric",
                       })}
+                      {log.time && <span className="ml-2 text-xs text-muted-foreground">{log.time}</span>}
                     </div>
                     <button
                       onClick={() => removeFoodLog(log.id)}

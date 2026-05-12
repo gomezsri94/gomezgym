@@ -4,6 +4,7 @@ export type FoodEntry = {
   id: string;
   foodId: string;
   date: string; // YYYY-MM-DD
+  time?: string; // HH:MM
   quantity: number;
   brand?: string;
   grams: number;

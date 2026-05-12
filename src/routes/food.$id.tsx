@@ -96,6 +96,10 @@ function FoodPage() {
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
             <div>
+              <label className="text-xs font-medium text-muted-foreground">Time</label>
+              <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+            </div>
+            <div>
               <label className="text-xs font-medium text-muted-foreground">Quantity</label>
               <Input
                 type="number"

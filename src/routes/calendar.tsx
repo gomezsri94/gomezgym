@@ -118,35 +118,50 @@ function CalendarPage() {
 
             <h3 className="mt-6 text-sm font-semibold text-muted-foreground">Food</h3>
             <ul className="mt-2 space-y-2">
-              {dayFoodLogs.map((log) => {
-                const food = foodMap.get(log.foodId);
+              {Array.from(
+                dayFoodLogs.reduce((map, log) => {
+                  const arr = map.get(log.foodId) ?? [];
+                  arr.push(log);
+                  map.set(log.foodId, arr);
+                  return map;
+                }, new Map<string, typeof dayFoodLogs>()).entries(),
+              ).map(([foodId, group]) => {
+                const food = foodMap.get(foodId);
+                const totalQty = group.reduce((s, l) => s + (l.quantity || 0), 0);
+                const totalGrams = group.reduce((s, l) => s + (l.grams || l.amount || 0), 0);
+                const totalCals = group.reduce((s, l) => s + (l.calories || 0), 0);
+                const brands = Array.from(new Set(group.map((l) => l.brand).filter(Boolean))) as string[];
                 return (
-                  <li key={log.id}>
+                  <li key={foodId}>
                     <Link
                       to="/food/$id"
-                      params={{ id: log.foodId }}
+                      params={{ id: foodId }}
                       className="block rounded-xl border border-border bg-card p-4 transition hover:border-primary/60"
                     >
-                      <div className="font-semibold">{food?.name ?? "Deleted food"}</div>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          Qty {log.quantity || 0}
-                        </span>
-                        {log.brand && (
-                          <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium">
-                            {log.brand}
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold">{food?.name ?? "Deleted food"}</div>
+                        {group.length > 1 && (
+                          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-600">
+                            ×{group.length}
                           </span>
                         )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
                         <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          {log.grams || log.amount || 0}g
+                          Qty {totalQty}
+                        </span>
+                        {brands.map((b) => (
+                          <span key={b} className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium">
+                            {b}
+                          </span>
+                        ))}
+                        <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
+                          {totalGrams}g
                         </span>
                         <span className="rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium tabular-nums">
-                          {log.calories} kcal
+                          {totalCals} kcal
                         </span>
                       </div>
-                      {log.notes && (
-                        <div className="mt-2 text-xs text-muted-foreground">{log.notes}</div>
-                      )}
                     </Link>
                   </li>
                 );

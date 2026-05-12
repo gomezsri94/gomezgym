@@ -160,6 +160,7 @@ function FoodPage() {
                         month: "short",
                         day: "numeric",
                       })}
+                      {log.time && <span className="ml-2 text-xs text-muted-foreground">{log.time}</span>}
                     </div>
                     <button
                       onClick={() => removeFoodLog(log.id)}

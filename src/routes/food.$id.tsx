@@ -58,6 +58,7 @@ function FoodPage() {
     addFoodLog({
       foodId: id,
       date,
+      time: time || undefined,
       quantity: parsedQuantity || 0,
       brand: brand.trim() || undefined,
       grams: parsedGrams || 0,

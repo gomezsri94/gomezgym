@@ -39,6 +39,10 @@ function ExercisePage() {
   };
 
   const [date, setDate] = useState(todayISO());
+  const [time, setTime] = useState(() => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
   const [sets, setSets] = useState<{ reps: string; kg: string; seconds: string }[]>([
     { reps: "", kg: "", seconds: "" },
   ]);
@@ -77,7 +81,7 @@ function ExercisePage() {
       })
       .filter((s) => s.reps > 0 || (s.seconds ?? 0) > 0);
     if (parsed.length === 0) return;
-    addLog({ exerciseId: id, date, sets: parsed });
+    addLog({ exerciseId: id, date, time, sets: parsed });
     setSets([{ reps: "", kg: "", seconds: "" }]);
   };
 
@@ -145,13 +149,21 @@ function ExercisePage() {
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h2 className="text-lg font-semibold">Log a session</h2>
-          <div className="mt-4 grid gap-2 sm:grid-cols-[180px_1fr]">
+          <div className="mt-4 grid gap-2 sm:grid-cols-[180px_140px_1fr]">
             <div>
               <label className="text-xs font-medium text-muted-foreground">Date</label>
               <Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Time</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
               />
             </div>
           </div>
@@ -237,6 +249,11 @@ function ExercisePage() {
                         month: "short",
                         day: "numeric",
                       })}
+                      {log.time && (
+                        <span className="ml-2 text-xs font-normal text-muted-foreground tabular-nums">
+                          {log.time}
+                        </span>
+                      )}
                     </div>
                     <button
                       onClick={() => removeLog(log.id)}

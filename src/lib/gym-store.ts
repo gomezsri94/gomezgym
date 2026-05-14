@@ -5,6 +5,7 @@ export type WorkoutEntry = {
   id: string;
   exerciseId: string;
   date: string; // YYYY-MM-DD
+  time?: string; // HH:MM
   sets: WorkoutSet[];
   createdAt: number;
 };

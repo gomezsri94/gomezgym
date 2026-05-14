@@ -39,6 +39,10 @@ function ExercisePage() {
   };
 
   const [date, setDate] = useState(todayISO());
+  const [time, setTime] = useState(() => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
   const [sets, setSets] = useState<{ reps: string; kg: string; seconds: string }[]>([
     { reps: "", kg: "", seconds: "" },
   ]);

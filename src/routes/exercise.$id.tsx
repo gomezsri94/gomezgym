@@ -149,13 +149,21 @@ function ExercisePage() {
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h2 className="text-lg font-semibold">Log a session</h2>
-          <div className="mt-4 grid gap-2 sm:grid-cols-[180px_1fr]">
+          <div className="mt-4 grid gap-2 sm:grid-cols-[180px_140px_1fr]">
             <div>
               <label className="text-xs font-medium text-muted-foreground">Date</label>
               <Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Time</label>
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
               />
             </div>
           </div>

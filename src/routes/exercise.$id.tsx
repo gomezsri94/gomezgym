@@ -249,6 +249,11 @@ function ExercisePage() {
                         month: "short",
                         day: "numeric",
                       })}
+                      {log.time && (
+                        <span className="ml-2 text-xs font-normal text-muted-foreground tabular-nums">
+                          {log.time}
+                        </span>
+                      )}
                     </div>
                     <button
                       onClick={() => removeLog(log.id)}

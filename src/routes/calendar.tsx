@@ -94,7 +94,12 @@ function CalendarPage() {
                       params={{ id: log.exerciseId }}
                       className="block rounded-xl border border-border bg-card p-4 transition hover:border-primary/60"
                     >
-                      <div className="font-semibold">{ex?.name ?? "Deleted exercise"}</div>
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold">{ex?.name ?? "Deleted exercise"}</div>
+                        {log.time && (
+                          <span className="text-xs text-muted-foreground tabular-nums">{log.time}</span>
+                        )}
+                      </div>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {log.sets.map((s, i) => (
                           <span

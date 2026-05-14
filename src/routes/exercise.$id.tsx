@@ -81,7 +81,7 @@ function ExercisePage() {
       })
       .filter((s) => s.reps > 0 || (s.seconds ?? 0) > 0);
     if (parsed.length === 0) return;
-    addLog({ exerciseId: id, date, sets: parsed });
+    addLog({ exerciseId: id, date, time, sets: parsed });
     setSets([{ reps: "", kg: "", seconds: "" }]);
   };
 
